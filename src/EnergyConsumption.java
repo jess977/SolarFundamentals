@@ -20,23 +20,7 @@ public class EnergyConsumption {
     static {
 
         Scanner MyAppliances = new Scanner(System.in); // Scanner for user input
-/*
- Ideally electric appliances input should be in form of a table - see "GUI idea" in "Energify > Tools"
 
-          (first column)      |    (second column)         |      (third column)      |   (fourth column)    |    (fifth column)
-        Type of appliance     |    number of items         | daily operational hours  |  Power Rating in W   |    Type of current   --> this line could be an inprinted text box on the GUI ?
-        ----------------------|----------------------------|--------------------------|----------------------|------------------------------
-        Drop down menu list   | blank box that intakes     |   same as column two     | same as column two   |    Drop down menu
-        Options: lightbulb,   |numbers? otherwise intakes  |                          |                      |    Options: AC, DC
-        radio, phone, TV,     |  text and converts it      |                          |                      |
-        refrigerator, other   | blank box not allowed!     |   if blank then take     | if blank then take   |  if blank then make
-                              |                            |   assumption value       |  assumption value    |      assumption
-        -------------------------------------------------------------------------------------------------------------------------------------
-        ideally user can add as many lines as they wish ? have like a + button to add lines or - to remove
-        -------------------------------------------------------------------------------------------------------------------------------------
-*/
-        // code structure below may change sorryyyy:D
-        // each column above should correspond to a vector
         System.out.println("Enter sequence of other desired appliances' power rating [W], seperated by a comma: "); // this corresponds to 1st line column 4 and can be removed
         String Power_Rating_input = MyAppliances.nextLine();
         String[] string_Power_Rating = Power_Rating_input.split(",");
@@ -87,12 +71,13 @@ public class EnergyConsumption {
             Annual_energy_demand = Daily_energy_demand * 365;
             Peak_load += Load; // assumes peak system load is the sum of loads, i.e. all used at the same time
             AC_Peak_load += AC_load;
+        }
 
             MyAppliances.close(); // to prevent resource leaks
             SolarPVModule.io.write(Daily_energy_demand); // used in Solar PV code
             SolarPVModule.io.write(Peak_load); // used in Solar PV code
             SolarPVModule.io.write(Annual_energy_demand); // used in Solar PV code
             AdditionalComponents.io.write(AC_Peak_load); // used in Additional Components code
-        }
+
     }
 }
