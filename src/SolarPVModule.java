@@ -56,7 +56,7 @@ public class SolarPVModule { //Changed name, it was "SolarPV"
             /*Temperature Influence on module Pmpp*/
             for (int n = 0; n < T_air.length; n++) { // update to length function later
                 double Tcell = T_air[n] + SolarFundamentals.GlobalTiltedTrradiationIArray.get(n) * (input.NOCT[k] - T_NOCT) / G_NOCT;
-                double New_Pmpp_vector[n] = input.Pmpp[k] * (1 + input.PmppVariation[k] * (Tcell - T_cell_STC));
+                New_Pmpp_vector[n] = input.Pmpp[k] * (1 + input.PmppVariation[k] * (Tcell - T_cell_STC));
             }
 
             /*Annual energy output from module*/
@@ -107,7 +107,7 @@ public class SolarPVModule { //Changed name, it was "SolarPV"
         }
 
         // Matrix of k modules
-       double[][] SolarPV_grid = new double[Array_Cost_vector.length][4]; // array of rows = length and 4 columns
+        double[][] SolarPV_grid = new double[Array_Cost_vector.length][4]; // array of rows = length and 4 columns
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < Array_Cost_vector.length; j++) {
                 SolarPV_grid[j][i] = Array_Cost_vector[j]; // this should correspond to a column
@@ -116,6 +116,5 @@ public class SolarPVModule { //Changed name, it was "SolarPV"
                 SolarPV_grid[j][i + 3] = Annual_energy_output_vector[j];
             }
         }
-
     }
 }
