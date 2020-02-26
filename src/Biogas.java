@@ -8,6 +8,8 @@ import java.util.*;
 /*
 TO DO:
      - yet to finish
+     - Confirm with supplier: gas holder & digester volume, retention time method,
+     - Find Index method on Java?
 */
 
 public class Biogas {
@@ -18,20 +20,28 @@ public class Biogas {
         InputDTO input = io.read();
         /*----------------------------------------Biogas MATLAB code-------------------------------------------------*/
         // User Inputs - add to TerminalIO of user
-        input.Gas_consumed;
-        input.livestock_manure_vol;
-        input.Number;
-        input.organic_waste;
-        intput.buckets;
+        input.Gas_consumed; //double
+        input.livestock_manure_vol; //double
+        input.Number; //double
+        input.organic_waste; //double
+        intput.buckets; //double
         // Supplier inputs or litterature from supplier
-        livestock_volatile_content; // from litterature and value "associated" with the livestock name from dropdown
-        input.organic_volatile_percentage; // from litterature and value "associated" with crop name from dropdown
-        intput.Water_Vol_ratio; // depends on the biodigester? input from supplier ideally!
-        input.Biodigesters_suppliers;
-        input.Type;
-        input.Biodigester_type;
-        input.Total_plant_vol;
-        input.Total_plant_vol;
+        livestock_volatile_content; //double // from litterature and value "associated" with the livestock name from dropdown
+        input.organic_volatile_percentage; //double // from litterature and value "associated" with crop name from dropdown
+        intput.Water_Vol_ratio; //double// depends on the biodigester? input from supplier ideally!
+        input.Total_plant_vol; //double
+        input.Type; // string
+        input.Biodigester_cost;
+
+        if (input.Type.equals("Fixed Dome")) {
+            Biodigester_type = 1;
+        } else if (input.Type.equals("Floating Drum")) {
+            Biodigester_type = 2;
+        } else if (input.Type.equals("Balloon")) {
+            Biodigester_type = 3;
+        }
+
+        Biodigester_type;
 
         double Feedstock_manure_sum = 0;
         double total_livestock_volatile_content_sum = 0;
@@ -60,9 +70,9 @@ public class Biogas {
         /*Importing Air Temperature from Renewables.ninja*/
         double[] T_air = req.getT_air();
         // Some element are equal to -999, equal them to zero
-        // Ave_daily_temperature(Ave_daily_temperature(:,1)==-999)=0;
-        // Ave_daily_temperature(Ave_daily_temperature<16) = 16;
-        // Ave_daily_temperature(Ave_daily_temperature>33) = 33;
+        // T_air(T_air(:,1)==-999)=0;
+        // T_air(T_air<16) = 16;
+        // T_air(T_air>33) = 33;
 
         // Yield factors for biogas production based on temperature and retention time
         // import excel spreasheet or build database
@@ -73,54 +83,54 @@ public class Biogas {
         double[] Retention_time = new double[Total_plant_vol.length];
         double[] Annual_production = new double[Total_plant_vol.length];
         double[] Average_daily = new double[Total_plant_vol.length];
-        double[] Y_column_vector = new double[T_air.length];
 
-        for (n = 0; n <= input.Total_plant_vol.length; n++) {
-            // Finding the digester volume and the gas holder volume
-            if (Biodigester_type[n] = 1) {
-                Digester_vol[n] = 0.8 * input.Total_plant_vol[n]; // in m^3 account for feedstock and water volumes
-                Gas_storage_vol[n] = 0.2 * input.Total_plant_vol[n]; // in m^3
-            } else if (Biodigester_type[n] = 2) {
-                Digester_vol[n] = 0.7 * input.Total_plant_vol[n]; // in m^3 account for feedstock and water volumes
-                Gas_storage_vol[n] = 0.3 * input.Total_plant_vol[n]; // in m^3
-            } else if (Biodigester_type[n] = 3) {
-                Digester_vol[n] = 0.75 * input.Total_plant_vol[n]; // in m^3 account for feedstock and water volumes
-                Gas_storage_vol[n] = 0.25 * input.Total_plant_vol[n]; // in m^3
+        for (k = 0; k <= input.Total_plant_vol.length; k++) { // for each biodigester
+            // Finding the digester volume and the gas holder volume - ask supplier
+            if (Biodigester_type[k] = 1) {
+                Digester_vol[k] = 0.8 * input.Total_plant_vol[k]; // in m^3 account for feedstock and water volumes
+                Gas_storage_vol[k] = 0.2 * input.Total_plant_vol[k]; // in m^3
+            } else if (Biodigester_type[k] = 2) {
+                Digester_vol[k] = 0.7 * input.Total_plant_vol[k]; // in m^3 account for feedstock and water volumes
+                Gas_storage_vol[k] = 0.3 * input.Total_plant_vol[k]; // in m^3
+            } else if (Biodigester_type[k] = 3) {
+                Digester_vol[k] = 0.75 * input.Total_plant_vol[k]; // in m^3 account for feedstock and water volumes
+                Gas_storage_vol[k] = 0.25 * input.Total_plant_vol[k]; // in m^3
             }
-            // Retention time in days
-            Retention_time(i) = Digester_vol(i) / Total_Feedstock_Vol; // in days
-            if Retention_time(i) < 6
-            Retention_time(i) = 6;
-            elseif Retention_time (i) > 100
-            Retention_time(i) = 100;
-            end
-            Biodigester_supplier(i, 6) = Retention_time(i);
+            // Retention time in days - confirm method with supplier
+            Retention_time[k] = Digester_vol[k] / Total_Feedstock_Vol; // in days
+            if (Retention_time[k] < 6) {
+                Retention_time[k] = 6;
+            } else if (Retention_time[k] > 100) {
+                Retention_time[k] = 100;
+            }
 
-            // Yield factors for biogas production based on temperature and retention time
-            Y_row_index = find(Yield_factors(:,2) >=Retention_time(i), 1);
-            for j = 1:length(Ave_daily_temperature)
-            Y_column_index = find(Yield_factors(1,:) >=Ave_daily_temperature(j), 1);
-            Y_column_vector(j) = Yield_factors(Y_row_index, Y_column_index); // changes with daily temperature
-            end
+            // Yield factors for biogas production based on temperature and retention time - confirm with supplier
+            // look for Find function in Java
+            Y_row_index = find(Yield_factors(:,2) >=Retention_time(k), 1);
+            for n = 1; n <= T_air.length; n++){
+                // look for Find function in Java
+                Y_column_index = find(Yield_factors(1,:) =>T_air(n), 1);
+                Y_factor_daily = Yield_factors(Y_row_index, Y_column_index); // changes with daily temperature
+                // Calculating the daily gas production
+                double Daily_gas_production = Y_factor_daily * Digester_vol[k] * Total_volatile_content / 1000; // in m^3 for each day withing a year
+                Annual_production[k] += Daily_gas_production; // in m^3 in one year
+            }
 
-            // Calculating the daily gas production
-            Daily_gas_production = (Y_column_vector. * Digester_vol(i) * Total_volatile_content) / 1000; // in m^3 for each day withing a year
-            Annual_production(i) = sum(Daily_gas_production); // in m^3 in one year
-            Biodigester_supplier(i, 2) = Annual_production(i);
-            Average_daily(i) = sum(Daily_gas_production) / 365; // in m^3 daily average
-            Biodigester_supplier(i, 1) = Average_daily(i);
+            Average_daily[k] = Annual_production / 365; // in m^3 daily average
 
             // Comparing biogas produced with gas storage
-            Stored_gas = Average_daily(i) - Gas_consumed;
-            if (Gas_storage_vol(i) < Stored_gas) ||(Gas_consumed > Average_daily(i))
-            Biodigester_supplier(i,:) =0;
-            Type(i,:) =0;
-            end
+            Stored_gas[k] = Average_daily[k] - Gas_consumed;
+            if (Gas_storage_vol[k] < Stored_gas[k] ||(Gas_consumed > Average_daily[k]) {
+                Biodigester_cost[k] = 0;
+                Digester_vol[k] = 0;
+                Gas_storage_vol[k] = 0;
+                Retention_time[k] = 0;
+                Annual_production[k] = 0;
+                Average_daily[k] = 0;
+            }
         }
-        Biodigester_supplier(~any(Biodigester_supplier,2),:) = []; %Deletes all the zero rows
-        Type(Type(:,1)=='0') = [];
 
-        // Sorting array
+        // Sorting array - add average_daily, annual_production, stored_gas
         for (int r = 0; r < Biodigester_cost.length; r++) {
             if (Biodigester_cost[r] > Biodigester_cost[r + 1]) {
                 // Sorting cost array from low to high
@@ -131,9 +141,18 @@ public class Biogas {
                 double Temporary_Biodigester_type = Biodigester_type[r];
                 Biodigester_type[r] = Biodigester_type[r + 1]; // swap costs
                 Biodigester_type[r + 1] = Temporary_Biodigester_type;
-                double Temporary_Biodigester_vol = Biodigester_vol[r];
-                Biodigester_vol[r] = Biodigester_vol[r + 1]; // swap costs
-                Biodigester_vol[r + 1] = Temporary_Biodigester_vol;
+                double Temporary_Digester_vol = Digester_vol[r];
+                Digester_vol[r] = Digester_vol[r + 1]; // swap costs
+                Digester_vol[r + 1] = Temporary_Digester_vol;
+                double Temporary_Gas_storage_vol = Gas_storage_vol[r];
+                Gas_storage_vol[r] = Gas_storage_vol[r + 1]; // swap costs
+                Gas_storage_vol[r + 1] = Temporary_Gas_storage_vol;
+                double Temporary_Annual_production = Annual_production[r];
+                Annual_production[r] = Annual_production[r + 1]; // swap costs
+                Annual_production[r + 1] = Temporary_Annual_production;
+                double Temporary_Average_daily = Average_daily[r];
+                Average_daily[r] = Average_daily[r + 1]; // swap costs
+                Average_daily[r + 1] = Temporary_Average_daily;
             }
         }
 
