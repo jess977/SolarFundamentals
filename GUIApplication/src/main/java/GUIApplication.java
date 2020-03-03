@@ -10,8 +10,7 @@ import java.awt.GridLayout;
 import java.awt.event.KeyEvent;
 
 /* TO DO:
-       - Add grid layout rows and columns in Appliances
-       - Agriculture not finished
+       -
  */
 
 public class GUIApplication {
