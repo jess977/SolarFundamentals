@@ -1,3 +1,6 @@
+import javafx.collections.ObservableList;
+import javafx.scene.control.ComboBox;
+
 import javax.swing.*;
 import java.awt.*;
 import javax.swing.JTabbedPane;
@@ -8,11 +11,91 @@ import javax.swing.JTextField;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.KeyEvent;
+import java.beans.ConstructorProperties;
 
 /* TO DO:
-       - Add grid layout rows and columns in Appliances
-       - Agriculture not finished
+        - Finish water & sanitation
+        - Fix resize
  */
+
+class PreferredSizeComboBox<T> extends JComboBox<T> {
+    public PreferredSizeComboBox(T[] items) {
+        super(items);
+    }
+
+    @Override
+    public Dimension getMaximumSize() {
+        Dimension max = super.getMaximumSize();
+        max.width = getPreferredSize().width;
+        return max;
+    }
+}
+
+class EnergifyCardPanel extends JPanel {
+    static final String EMPTY_PANEL = "No";
+    static final String SHOW_PANEL = "Yes";
+
+    public EnergifyCardPanel(JPanel show) {
+        JPanel cardPanel = new JPanel(new CardLayout());
+        cardPanel.add(new JPanel(), EMPTY_PANEL);
+        cardPanel.add(show, SHOW_PANEL);
+
+        PreferredSizeComboBox<String> comboBox = new PreferredSizeComboBox<>(new String[] {EMPTY_PANEL, SHOW_PANEL});
+        comboBox.addItemListener(evt -> {
+            CardLayout cl = (CardLayout)(cardPanel.getLayout());
+            cl.show(cardPanel, (String)evt.getItem());
+        });
+
+        JPanel comboBoxPanel = new JPanel();
+        comboBoxPanel.add(comboBox);
+
+        setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
+        add(comboBoxPanel);
+        add(cardPanel);
+    }
+
+    public EnergifyCardPanel(String label, JPanel show) {
+        JPanel cardPanel = new JPanel(new CardLayout());
+        cardPanel.add(new JPanel(), EMPTY_PANEL);
+        cardPanel.add(show, SHOW_PANEL);
+
+        PreferredSizeComboBox<String> comboBox = new PreferredSizeComboBox<>(new String[] {EMPTY_PANEL, SHOW_PANEL});
+        comboBox.addItemListener(evt -> {
+            CardLayout cl = (CardLayout)(cardPanel.getLayout());
+            cl.show(cardPanel, (String)evt.getItem());
+        });
+
+        JPanel comboBoxPanel = new JPanel();
+        comboBoxPanel.setLayout(new BoxLayout(comboBoxPanel, BoxLayout.PAGE_AXIS));
+        comboBoxPanel.add(new Label(label));
+        comboBoxPanel.add(comboBox);
+
+        setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
+        add(comboBoxPanel);
+        add(cardPanel);
+    }
+
+    public EnergifyCardPanel(String label, JPanel show, String[] options) {
+        JPanel cardPanel = new JPanel(new CardLayout());
+        cardPanel.add(new JPanel(), options[0]);
+        cardPanel.add(show, options[1]);
+
+        PreferredSizeComboBox<String> comboBox = new PreferredSizeComboBox<>(options);
+        comboBox.addItemListener(evt -> {
+            CardLayout cl = (CardLayout)(cardPanel.getLayout());
+            cl.show(cardPanel, (String)evt.getItem());
+        });
+
+        JPanel comboBoxPanel = new JPanel();
+        comboBoxPanel.setLayout(new BoxLayout(comboBoxPanel, BoxLayout.PAGE_AXIS));
+        comboBoxPanel.add(new Label(label));
+        comboBoxPanel.add(comboBox);
+
+        setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
+        add(comboBoxPanel);
+        add(cardPanel);
+    }
+}
 
 class EnergifyScrollTablePanel extends JPanel {
     private JTable table;
@@ -71,9 +154,9 @@ public class GUIApplication {
         JLabel howFarIsTheBlankFromTheGridLabel = new JLabel();
         JLabel isTheUserCurrentlyLocatedInTheLabel = new JLabel();
 
-        JComboBox<String> whatTypeOfEntityComboBox = new JComboBox<>(new String[]{"Household", "Community", "Facility"});
-        JComboBox<String> howFarIsTheBlankFromTheGridComboBox = new JComboBox<>(new String[]{"Rural/Remote area","Part of urban area"});
-        JComboBox<String> isTheUserCurrentlyLocatedInTheComboBox = new JComboBox<>(new String[]{"Yes","No"});
+        PreferredSizeComboBox<String> whatTypeOfEntityComboBox = new PreferredSizeComboBox<>(new String[]{"Household", "Community", "Facility"});
+        PreferredSizeComboBox<String> howFarIsTheBlankFromTheGridComboBox = new PreferredSizeComboBox<>(new String[]{"Rural/Remote area","Part of urban area"});
+        PreferredSizeComboBox<String> isTheUserCurrentlyLocatedInTheComboBox = new PreferredSizeComboBox<>(new String[]{"Yes","No"});
 
         whatTypeOfEntityPanel.setLayout(new GridLayout(2,1,0,0));
         howFarIsTheBlankFromTheGridPanel.setLayout(new GridLayout(2,1,0,0));
@@ -152,22 +235,39 @@ public class GUIApplication {
 
         appliancesPanel.getTable().getColumnModel().getColumn(0) //Type Of Appliances
                 .setCellEditor(new DefaultCellEditor(
-                        new JComboBox<>(new String[] {"Lightbulb", "Radio", "TV", "Refrigerator", "Fan", "Mobile", "Electric Stove", "Other"})));
+                        new PreferredSizeComboBox<>(new String[] {"Lightbulb", "Radio", "TV", "Refrigerator", "Fan", "Mobile", "Electric Stove", "Other"})));
 
         appliancesPanel.getTable().getColumnModel().getColumn(4) //Current Type
                 .setCellEditor(new DefaultCellEditor(
-                        new JComboBox<>(new String[] {"DC", "AC"})));
+                        new PreferredSizeComboBox<>(new String[] {"DC", "AC"})));
 
         //----------------- Water & Sanitation -----//
         JPanel waterAndSanitationPanel = new JPanel();
 
         //----------------- Agriculture ------------//
         JPanel agriculturePanel = new JPanel();
+        agriculturePanel.setLayout(new BoxLayout(agriculturePanel, BoxLayout.LINE_AXIS));
+
+        EnergifyScrollTablePanel agricultureCropTable = new EnergifyScrollTablePanel(new String[][] {{"Edit"}}, new String[] {"Type Of Crop"});
+        agriculturePanel.add(new EnergifyCardPanel("How much crop land is irrigated if any?", agricultureCropTable));
+        agricultureCropTable.getTable().getColumnModel().getColumn(0) //Type Of Crop
+                .setCellEditor(new DefaultCellEditor(
+                        new PreferredSizeComboBox<>(new String[] {"Maise", "Milet", "Wheat", "Tomatoes", "Onions", "Potatoes", "Cucumber"})));
+
+        agriculturePanel.add(Box.createRigidArea(new Dimension(5,0)));
+
+        agriculturePanel.add(new EnergifyCardPanel( //livestock
+                "How much water is given to livestock if any?",
+                new EnergifyScrollTablePanel(new String[][] {{"Area Covered"}}, new String[] {"Edit"})));
+
+        agriculturePanel.add(Box.createRigidArea(new Dimension(5,0)));
+
+        agriculturePanel.add(new EnergifyCardPanel( //practices
+                "Are any of the following practices applied?",
+                new JPanel(),
+                new String[] {"drip-irrigation", "vertical cultivation"}));
 
         //----------------- Other Uses -------------//
-        final String OTHER_USES_EMPTY_PANEL = "No";
-        final String OTHER_USES_TABLE_PANEL = "Yes";
-
         EnergifyScrollTablePanel otherUsesFirstTablePanel = new EnergifyScrollTablePanel(
                 new Object[][] {{"Edit", "Edit", "Edit"}},
                 new String[] {"Activities requiring electricity", "Electricity consumed", "Operational Hours/day"});
@@ -181,11 +281,11 @@ public class GUIApplication {
         otherUsesTablesPanel.add(otherUsesFirstTablePanel);
         otherUsesTablesPanel.add(otherUsesSecondTablePanel);
 
-        JPanel otherUsesCardPanel = new JPanel(new CardLayout());
-        otherUsesCardPanel.add(new JPanel(), OTHER_USES_EMPTY_PANEL);
-        otherUsesCardPanel.add(otherUsesTablesPanel, OTHER_USES_TABLE_PANEL);
+        /*JPanel otherUsesCardPanel = new JPanel(new CardLayout());
+        otherUsesCardPanel.add(new JPanel(), EMPTY_PANEL);
+        otherUsesCardPanel.add(otherUsesTablesPanel, TABLE_PANEL);
 
-        JComboBox<String> otherUsesComboBox = new JComboBox<>(new String[] {OTHER_USES_EMPTY_PANEL, OTHER_USES_TABLE_PANEL});
+        JComboBox<String> otherUsesComboBox = new JComboBox<>(new String[] {EMPTY_PANEL, TABLE_PANEL});
         otherUsesComboBox.addItemListener(evt -> {
             CardLayout cl = (CardLayout)(otherUsesCardPanel.getLayout());
             cl.show(otherUsesCardPanel, (String)evt.getItem());
@@ -197,14 +297,14 @@ public class GUIApplication {
         JPanel otherUsesPanel = new JPanel();
         otherUsesPanel.setLayout(new BoxLayout(otherUsesPanel, BoxLayout.PAGE_AXIS));
         otherUsesPanel.add(otherUsesComboBoxPanel);
-        otherUsesPanel.add(otherUsesCardPanel);
+        otherUsesPanel.add(otherUsesCardPanel);*/
+        EnergifyCardPanel otherUsesPanel = new EnergifyCardPanel(otherUsesTablesPanel);
 
         //----------------- Tabs -------------------//
         JTabbedPane tabbedPane = new JTabbedPane();
 
         tabbedPane.addTab("Appliances", appliancesPanel);
         tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
-
 
         tabbedPane.addTab("Water & Sanitation", waterAndSanitationPanel);
         tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
@@ -219,21 +319,15 @@ public class GUIApplication {
         JFrame root = new JFrame("Energify");
         Container rootPane = root.getContentPane();
 
-        root.setMinimumSize(new Dimension(873,290));
         root.setLayout(new BoxLayout(rootPane, BoxLayout.PAGE_AXIS));
-        //root.getRootPane().setBorder(BorderFactory.createMatteBorder(4,4,4,4, Color.BLACK));
-
-        //rootPane.setLayout(new BorderLayout(8,6));
-        //rootPane.setBackground(Color.green);
 
         root.add(Box.createRigidArea(new Dimension(0,20)));
         root.add(introPanel);
         root.add(Box.createRigidArea(new Dimension(0,20)));
         root.add(tabbedPane);
-        //Button b = new Button("Tmp");
-        //b.addActionListener( a -> System.out.println(introPanel.getMinimumSize()));//java.awt.Dimension[width=873,height=54]
-        //root.add(b);
+
         root.pack();
+        root.setMinimumSize(root.getSize());
         root.setVisible(true);
         root.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         //------------------------------------------//
