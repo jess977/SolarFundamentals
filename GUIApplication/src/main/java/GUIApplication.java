@@ -64,11 +64,11 @@ public class GUIApplication {
         JPanel TypeOfCurrentPanel = new JPanel();
 
         // Complete below
-        TypeOfAppliancePanel.setLayout(new GridLayout(,,,));
-        PowerRatingPanel.setLayout(new GridLayout(,,,));
-        NumberOfAppliancesPanel.setLayout(new GridLayout(,,,));
-        OperationalHoursPanel.setLayout(new GridLayout(,,,));
-        TypeOfCurrentPanel.setLayout(new GridLayout(,,,));
+        TypeOfAppliancePanel.setLayout(new GridLayout(1,1,0,0));
+        PowerRatingPanel.setLayout(new GridLayout(1,1,0,0));
+        NumberOfAppliancesPanel.setLayout(new GridLayout(1,1,0,0));
+        OperationalHoursPanel.setLayout(new GridLayout(1,1,0,0));
+        TypeOfCurrentPanel.setLayout(new GridLayout(1,1,0,0));
 
         JComboBox<String> TypeOfApplianceComboBox = new JComboBox<>(new String[]{"Lightbulb","Radio","TV","Refrigerator","Fan","Mobile","Electric Stove","Other"});
         TypeOfApplianceComboBox.setEditable(true);
