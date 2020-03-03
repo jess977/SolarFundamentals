@@ -3,6 +3,7 @@ import java.awt.*;
 import javax.swing.JTabbedPane;
 import javax.swing.JPanel;
 import javax.swing.JFrame;
+import javax.swing.table.DefaultTableModel;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -14,14 +15,15 @@ public class GUIApplication {
         //----------------- Intro ------------------//
         JPanel introPanel = new JPanel();
         introPanel.setLayout(new GridLayout(1,3,0,0));
+        introPanel.setMaximumSize(new Dimension(1000, 54));
 
         JPanel whatTypeOfEntityPanel = new JPanel();
         JPanel howFarIsTheBlankFromTheGridPanel = new JPanel();
         JPanel isTheUserCurrentlyLocatedInThePanel = new JPanel();
 
-        JLabel whatTypeOfEntityLabel = new JLabel("What type of entity?");
-        JLabel howFarIsTheBlankFromTheGridLabel = new JLabel("How far is the ______ from the grid?");
-        JLabel isTheUserCurrentlyLocatedInTheLabel = new JLabel("Is the user currently located in the ______");
+        JLabel whatTypeOfEntityLabel = new JLabel("\t\tWhat type of entity?");
+        JLabel howFarIsTheBlankFromTheGridLabel = new JLabel();
+        JLabel isTheUserCurrentlyLocatedInTheLabel = new JLabel();
 
         JComboBox<String> whatTypeOfEntityComboBox = new JComboBox<>(new String[]{"Household", "Community", "Facility"});
         JComboBox<String> howFarIsTheBlankFromTheGridComboBox = new JComboBox<>(new String[]{"Rural/Remote area","Part of urban area"});
@@ -31,13 +33,12 @@ public class GUIApplication {
         howFarIsTheBlankFromTheGridPanel.setLayout(new GridLayout(2,1,0,0));
         isTheUserCurrentlyLocatedInThePanel.setLayout(new GridLayout(2,1,0,0));
 
-        howFarIsTheBlankFromTheGridComboBox.addActionListener(actionEvent -> {
-            howFarIsTheBlankFromTheGridLabel.setText(String.format("How far is the %s from the grid?", howFarIsTheBlankFromTheGridComboBox.getSelectedItem()));
+        whatTypeOfEntityComboBox.addActionListener(actionEvent -> {
+            howFarIsTheBlankFromTheGridLabel.setText(String.format("\t\tHow far is the %s from the grid?", whatTypeOfEntityComboBox.getSelectedItem().toString().toLowerCase()));
+            isTheUserCurrentlyLocatedInTheLabel.setText(String.format("\t\tIs the user currently located in the %s?", whatTypeOfEntityComboBox.getSelectedItem().toString().toLowerCase()));
         });
 
-        isTheUserCurrentlyLocatedInTheComboBox.addActionListener(actionEvent -> {
-            isTheUserCurrentlyLocatedInTheLabel.setText(String.format("Is the user currently located in the %s", isTheUserCurrentlyLocatedInTheComboBox.getSelectedItem()));
-        });
+        whatTypeOfEntityComboBox.setSelectedIndex(0);
 
         whatTypeOfEntityPanel.add(whatTypeOfEntityLabel);
         howFarIsTheBlankFromTheGridPanel.add(howFarIsTheBlankFromTheGridLabel);
@@ -52,14 +53,51 @@ public class GUIApplication {
         introPanel.add(isTheUserCurrentlyLocatedInThePanel);
 
         //----------------- Appliances -------------//
+        Object[][] appliancesRowData = {{"Edit", "Edit", "Edit", "Edit", "Edit"}};
+        DefaultTableModel appliancesModel = new DefaultTableModel(appliancesRowData, new String[] {"Type of Appliance", "Power Rating", "Number of Appliance", "Operational Hours/day", "ADD/RM"});
+        JTable appliancesTable = new JTable();
+        appliancesTable.setModel(appliancesModel);
+        //appliancesTable.setFillsViewportHeight(true);
+
+        appliancesTable.getColumnModel().getColumn(0) //Type Of Appliances
+                .setCellEditor(new DefaultCellEditor(
+                        new JComboBox<>(new String[] {"Lightbulb", "Radio", "TV", "Refrigerator", "Fan", "Mobile", "Electric Stove"})));
+
+        appliancesTable.getColumnModel().getColumn(4) //Current Type
+                .setCellEditor(new DefaultCellEditor(
+                        new JComboBox<>(new String[] {"DC", "AC"})));
+
+        JButton appliancesAddButton = new JButton("Add");
+        JButton appliancesRemoveButton = new JButton("Remove");
+        appliancesAddButton.addActionListener(actionEvent -> appliancesModel.addRow(appliancesRowData[0]));
+        appliancesRemoveButton.addActionListener(actionEvent -> {
+            int idx = appliancesTable.getSelectedRow();
+            while (idx >= 0) {
+                appliancesModel.removeRow(idx);
+                idx = appliancesTable.getSelectedRow();
+            }
+        });
+
+        JPanel appliancesButtonsPanel = new JPanel();
+        appliancesButtonsPanel.setLayout(new BoxLayout(appliancesButtonsPanel, BoxLayout.LINE_AXIS));
+        appliancesButtonsPanel.add(appliancesAddButton);
+        appliancesButtonsPanel.add(Box.createRigidArea(new Dimension(5,0)));
+        appliancesButtonsPanel.add(appliancesRemoveButton);
+
+        JPanel appliancesTablePanel = new JPanel();
+        appliancesTablePanel.setLayout(new BorderLayout());
+        appliancesTablePanel.add(appliancesTable.getTableHeader(), BorderLayout.PAGE_START);
+        appliancesTablePanel.add(appliancesTable, BorderLayout.CENTER);
+
+        ScrollPane appliancesPane = new ScrollPane();
+        appliancesPane.add(appliancesTablePanel);
+
         JPanel appliancesPanel = new JPanel();
-        appliancesPanel.setLayout(new GridLayout(1,4,5,5));
+        appliancesPanel.setLayout(new BoxLayout(appliancesPanel, BoxLayout.PAGE_AXIS));
 
-        appliancesPanel.add(new Label("Type of Appliance"));
-        appliancesPanel.add(new Label("Power Rating"));
-        appliancesPanel.add(new Label("Number of Appliance"));
-        appliancesPanel.add(new Label("Operational Hours/day"));
-
+        appliancesPanel.add(appliancesPane);
+        appliancesPanel.add(Box.createRigidArea(new Dimension(0,5)));
+        appliancesPanel.add(appliancesButtonsPanel);
         //----------------- Water & Sanitation -----//
         JPanel waterAndSanitationPanel = new JPanel();
 
@@ -84,18 +122,26 @@ public class GUIApplication {
 
         tabbedPane.addTab("Other Uses", otherUsesPanel);
         tabbedPane.setMnemonicAt(3, KeyEvent.VK_4);
+
         //----------------- Root -------------------//
         JFrame root = new JFrame("Energify");
-        root.setMinimumSize(new Dimension(1000,200));
-        root.setLayout(new GridLayout(2,1,5,5));
+        Container rootPane = root.getContentPane();
+
+        root.setMinimumSize(new Dimension(873,290));
+        root.setLayout(new BoxLayout(rootPane, BoxLayout.PAGE_AXIS));
         //root.getRootPane().setBorder(BorderFactory.createMatteBorder(4,4,4,4, Color.BLACK));
 
-        //Container c = root.getContentPane();
-        //c.setLayout(new BorderLayout(8,6));
-        //c.setBackground(Color.green);
+        //rootPane.setLayout(new BorderLayout(8,6));
+        //rootPane.setBackground(Color.green);
 
+        root.add(Box.createRigidArea(new Dimension(0,20)));
         root.add(introPanel);
+        root.add(Box.createRigidArea(new Dimension(0,20)));
         root.add(tabbedPane);
+        //Button b = new Button("Tmp");
+        //b.addActionListener( a -> System.out.println(introPanel.getMinimumSize()));//java.awt.Dimension[width=873,height=54]
+        //root.add(b);
+        root.pack();
         root.setVisible(true);
         root.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         //------------------------------------------//
