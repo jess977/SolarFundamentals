@@ -106,6 +106,6 @@ public class SolarPVModule { //Changed name, it was "SolarPV"
                 Annual_energy_output_vector[l + 1] = Temporary_No_Modules;
             }
         }
-        
+
     }
 }
