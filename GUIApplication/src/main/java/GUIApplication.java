@@ -12,6 +12,7 @@ import java.awt.event.KeyEvent;
 
 /* TO DO:
        - Add grid layout rows and columns in Appliances
+       - Agriculture not finished
  */
 
 public class GUIApplication {
@@ -55,7 +56,7 @@ public class GUIApplication {
 
         //----------------- Appliances -------------//
         JPanel appliancesPanel = new JPanel();
-        appliancesPanel.setLayout(new GridLayout(1,4,5,5));
+        appliancesPanel.setLayout(new GridLayout(1,5,5,5));
 
         JPanel TypeOfAppliancePanel = new JPanel();
         JPanel PowerRatingPanel = new JPanel();
@@ -63,28 +64,28 @@ public class GUIApplication {
         JPanel OperationalHoursPanel = new JPanel();
         JPanel TypeOfCurrentPanel = new JPanel();
 
-        // Complete below
-        TypeOfAppliancePanel.setLayout(new GridLayout(1,1,0,0));
-        PowerRatingPanel.setLayout(new GridLayout(1,1,0,0));
-        NumberOfAppliancesPanel.setLayout(new GridLayout(1,1,0,0));
-        OperationalHoursPanel.setLayout(new GridLayout(1,1,0,0));
-        TypeOfCurrentPanel.setLayout(new GridLayout(1,1,0,0));
+        TypeOfAppliancePanel.setLayout(new GridLayout(1,2,0,0));
+        PowerRatingPanel.setLayout(new GridLayout(1,2,0,0));
+        NumberOfAppliancesPanel.setLayout(new GridLayout(1,2,0,0));
+        OperationalHoursPanel.setLayout(new GridLayout(1,2,0,0));
+        TypeOfCurrentPanel.setLayout(new GridLayout(1,2,0,0));
 
-        JComboBox<String> TypeOfApplianceComboBox = new JComboBox<>(new String[]{"Lightbulb","Radio","TV","Refrigerator","Fan","Mobile","Electric Stove","Other"});
+        JComboBox<String> TypeOfApplianceComboBox = new JComboBox<>(new String[]{"Lightbulb","Radio","TV","Refrigerator",
+                "Fan","Mobile","Electric Stove","Other"});
         TypeOfApplianceComboBox.setEditable(true);
         JComboBox<String> CurrentTypeComboBox = new JComboBox<>(new String[]{"AC","DC"});
 
         JTextField PowerRatingTextField = new JTextField(20);
         PowerRatingTextField.addActionListener(actionEvent -> {
-            String PowerRatingInput = PowerRatingTextField.getText();
+            String PowerRatingInput = PowerRatingTextField.getText(); // later change so that each value to be stored as array element
         });
         JTextField NumberOfAppliancesTextField = new JTextField(20);
         NumberOfAppliancesTextField.addActionListener(actionEvent -> {
-            String NumberOfAppliancesInput = NumberOfAppliancesTextField.getText();
+            String NumberOfAppliancesInput = NumberOfAppliancesTextField.getText(); // later change so that each value to be stored as array element
         });
         JTextField OperationalHoursTextField = new JTextField(20);
         OperationalHoursTextField.addActionListener(actionEvent -> {
-            String OperationalHoursInput = OperationalHoursTextField.getText();
+            String OperationalHoursInput = OperationalHoursTextField.getText(); // later change so that each value to be stored as array element
         });
 
         TypeOfAppliancePanel.add(new Label("Type of Appliance"));
@@ -106,11 +107,48 @@ public class GUIApplication {
         appliancesPanel.add(OperationalHoursPanel);
         appliancesPanel.add(TypeOfCurrentPanel);
 
-        //----------------- Water & Sanitation -----//
+        //---------------------- Water & Sanitation ---------------------//
         JPanel WaterAndSanitationPanel = new JPanel();
 
-        //----------------- Agriculture ------------//
+        //-------------------------- Agriculture ------------------------//
         JPanel AgriculturePanel = new JPanel();
+        AgriculturePanel.setLayout(new GridLayout(3,3,0,0));
+
+        JLabel IrrigatedCropLandLabel = new JLabel("Is there crop land to be irrigated?");
+        JLabel LivestockWateringLabel = new JLabel("How much water is given to livestock if any?");
+        JLabel AgriculturalPracticesLabel = new JLabel("Are any of the following agricultural practices applied?");
+
+        JComboBox<String> IrrigatedCropLandComboBox = new JComboBox<>(new String[]{"Yes","No"});
+        IrrigatedCropLandComboBox.setEditable(true);
+        // create Case function such that Yes = TypeOfCropsPanel appears, No = no panel
+        IrrigatedCropLandComboBox.addActionListener(actionEvent -> {
+
+        });
+        JComboBox<String> LivestockWateringComboBox = new JComboBox<>(new String[]{"No Livestock"});
+        LivestockWateringComboBox.setEditable(true);
+        // need to add option to make listener work
+        LivestockWateringComboBox.addActionListener(actionEvent -> {
+            String LivestockWatering = LivestockWateringComboBox.getSelectedItem();
+        });
+
+        JPanel TypeOfCropsPanel = new JPanel();
+        JPanel AreaCoveredPanel = new JPanel();
+
+        TypeOfCropsPanel.setLayout(new GridLayout(1,2,0,0));
+        AreaCoveredPanel.setLayout(new GridLayout(1,2,0,0));
+
+        JLabel IrrigatedCropLandLabel = new JLabel("Type of Crops");
+        JLabel LivestockWateringLabel = new JLabel("Area Covered");
+
+        JComboBox<String> IrrigatedCropLandComboBox = new JComboBox<>(new String[]{"Cucumber","Maise","Millet","Onions",
+                "Potatoes","Tomatoes","Wheat"
+        });
+        // IrrigatedCropLandComboBox.addItemListener
+
+        JTextField AreaCoveredTextField = new JTextField(20);
+        AreaCoveredTextField.addActionListener(actionEvent -> {
+            String AreaCoveredInput = AreaCoveredTextField.getText(); // later change so that each value to be stored as array element
+        });
 
         //----------------- Other Uses -------------//
         JPanel OtherUsesPanel = new JPanel();
