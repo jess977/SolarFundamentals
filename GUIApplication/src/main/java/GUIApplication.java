@@ -4,11 +4,14 @@ import javax.swing.JTabbedPane;
 import javax.swing.JPanel;
 import javax.swing.JFrame;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.JTextField;
 import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+
+/* TO DO:
+       - Add grid layout rows and columns in Appliances
+ */
 
 public class GUIApplication {
     public static void main(String[] args) {
@@ -61,7 +64,7 @@ public class GUIApplication {
 
         appliancesTable.getColumnModel().getColumn(0) //Type Of Appliances
                 .setCellEditor(new DefaultCellEditor(
-                        new JComboBox<>(new String[] {"Lightbulb", "Radio", "TV", "Refrigerator", "Fan", "Mobile", "Electric Stove"})));
+                        new JComboBox<>(new String[] {"Lightbulb", "Radio", "TV", "Refrigerator", "Fan", "Mobile", "Electric Stove", "Other"})));
 
         appliancesTable.getColumnModel().getColumn(4) //Current Type
                 .setCellEditor(new DefaultCellEditor(
@@ -98,6 +101,7 @@ public class GUIApplication {
         appliancesPanel.add(appliancesPane);
         appliancesPanel.add(Box.createRigidArea(new Dimension(0,5)));
         appliancesPanel.add(appliancesButtonsPanel);
+
         //----------------- Water & Sanitation -----//
         JPanel waterAndSanitationPanel = new JPanel();
 

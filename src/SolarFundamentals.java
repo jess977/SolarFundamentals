@@ -11,7 +11,7 @@ TODO:
         Remove empty catch blocks * 2 occurrences;
         Change user input with if else to cycle (avoid breaking with small mistakes) * 1 occurrence.
 Updates:
-        Made some changes - Jess
+        Made some changes. Can all imssing weather data be obtained from Renewables.ninja - discuss with Marcos
         There will be no user inputs for SolarFundamentals
 */
 public class SolarFundamentals {

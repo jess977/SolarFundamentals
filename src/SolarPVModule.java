@@ -73,10 +73,11 @@ public class SolarPVModule { //Changed name, it was "SolarPV"
             NumberOFModules_vector[k] = NumberOfModules; // for each module k
 
             /*Comparing hourly energy demand with hourly balance of system output to make sure demand is met at every hour - ask Supplier*/
-            for (int n = 0; n < Hourly_Module_output_vector.length; n++) {
-                double Hourly_System_output = Hourly_Module_output_vector[n] * NumberOFModules_vector[k] + AdditionalComponents.Required_Capacity[1]; // Energy output kWh system array
-                if(Hourly_System_output < EnergyConsumption.HourlyDemand[n]){ // Variable EnergyConsumption.HourlyDemand to be created
-                    NumberOFModules_vector[k] = NumberOfModules + 1;
+            for (i = 0; i <= AdditionalComponents.Bank_Energy_Capacity_full. length; i++) {
+                for (int n = 0; n < Hourly_Module_output_vector.length; n++) {
+                    double Hourly_System_output = Hourly_Module_output_vector[n] * NumberOFModules_vector[k] + AdditionalComponents.Bank_Energy_Capacity_full[i]; // Energy output kWh system array
+                    if (Hourly_System_output < EnergyConsumption.HourlyDemand[n]) { // Variable EnergyConsumption.HourlyDemand to be created
+                        NumberOFModules_vector[k] = NumberOfModules + 1; }
                 }
                 break;
             }
@@ -86,7 +87,7 @@ public class SolarPVModule { //Changed name, it was "SolarPV"
             Array_Cost_vector[k] = Array_Cost;
         }
 
-        // Sorting arrays
+        // Sorting solar PV modules for one supplier only
         for (int l = 0; l < Array_Cost_vector.length-1; l++) {
             if (Array_Cost_vector[l] > Array_Cost_vector[l + 1]) {
                 // Sorting cost array from low to high
@@ -106,15 +107,5 @@ public class SolarPVModule { //Changed name, it was "SolarPV"
             }
         }
 
-        // Matrix of k modules
-        double[][] SolarPV_grid = new double[Array_Cost_vector.length][4]; // array of rows = length and 4 columns
-        for (int i = 0; i < 4; i++) {
-            for (int j = 0; j < Array_Cost_vector.length; j++) {
-                SolarPV_grid[j][i] = Array_Cost_vector[j]; // this should correspond to a column
-                SolarPV_grid[j][i + 1] = NumberOFModules_vector[j]; //another column
-                SolarPV_grid[j][i + 2] = New_Pmpp_array[j]; //and so on
-                SolarPV_grid[j][i + 3] = Annual_energy_output_vector[j];
-            }
-        }
     }
 }
