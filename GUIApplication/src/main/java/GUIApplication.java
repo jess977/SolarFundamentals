@@ -3,11 +3,16 @@ import java.awt.*;
 import javax.swing.JTabbedPane;
 import javax.swing.JPanel;
 import javax.swing.JFrame;
+import javax.swing.JTextField;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+
+/* TO DO:
+       - Add grid layout rows and columns in Appliances
+ */
 
 public class GUIApplication {
     public static void main(String[] args) {
@@ -31,12 +36,9 @@ public class GUIApplication {
         howFarIsTheBlankFromTheGridPanel.setLayout(new GridLayout(2,1,0,0));
         isTheUserCurrentlyLocatedInThePanel.setLayout(new GridLayout(2,1,0,0));
 
-        howFarIsTheBlankFromTheGridComboBox.addActionListener(actionEvent -> {
-            howFarIsTheBlankFromTheGridLabel.setText(String.format("How far is the %s from the grid?", howFarIsTheBlankFromTheGridComboBox.getSelectedItem()));
-        });
-
-        isTheUserCurrentlyLocatedInTheComboBox.addActionListener(actionEvent -> {
-            isTheUserCurrentlyLocatedInTheLabel.setText(String.format("Is the user currently located in the %s", isTheUserCurrentlyLocatedInTheComboBox.getSelectedItem()));
+        whatTypeOfEntityComboBox.addActionListener(actionEvent -> {
+            howFarIsTheBlankFromTheGridLabel.setText(String.format("How far is the %s from the grid?", whatTypeOfEntityComboBox.getSelectedItem()));
+            isTheUserCurrentlyLocatedInTheLabel.setText(String.format("Is the user currently located in the %s", whatTypeOfEntityComboBox.getSelectedItem()));
         });
 
         whatTypeOfEntityPanel.add(whatTypeOfEntityLabel);
@@ -55,19 +57,63 @@ public class GUIApplication {
         JPanel appliancesPanel = new JPanel();
         appliancesPanel.setLayout(new GridLayout(1,4,5,5));
 
-        appliancesPanel.add(new Label("Type of Appliance"));
-        appliancesPanel.add(new Label("Power Rating"));
-        appliancesPanel.add(new Label("Number of Appliance"));
-        appliancesPanel.add(new Label("Operational Hours/day"));
+        JPanel TypeOfAppliancePanel = new JPanel();
+        JPanel PowerRatingPanel = new JPanel();
+        JPanel NumberOfAppliancesPanel = new JPanel();
+        JPanel OperationalHoursPanel = new JPanel();
+        JPanel TypeOfCurrentPanel = new JPanel();
+
+        // Complete below
+        TypeOfAppliancePanel.setLayout(new GridLayout(,,,));
+        PowerRatingPanel.setLayout(new GridLayout(,,,));
+        NumberOfAppliancesPanel.setLayout(new GridLayout(,,,));
+        OperationalHoursPanel.setLayout(new GridLayout(,,,));
+        TypeOfCurrentPanel.setLayout(new GridLayout(,,,));
+
+        JComboBox<String> TypeOfApplianceComboBox = new JComboBox<>(new String[]{"Lightbulb","Radio","TV","Refrigerator","Fan","Mobile","Electric Stove","Other"});
+        TypeOfApplianceComboBox.setEditable(true);
+        JComboBox<String> CurrentTypeComboBox = new JComboBox<>(new String[]{"AC","DC"});
+
+        JTextField PowerRatingTextField = new JTextField(20);
+        PowerRatingTextField.addActionListener(actionEvent -> {
+            String PowerRatingInput = PowerRatingTextField.getText();
+        });
+        JTextField NumberOfAppliancesTextField = new JTextField(20);
+        NumberOfAppliancesTextField.addActionListener(actionEvent -> {
+            String NumberOfAppliancesInput = NumberOfAppliancesTextField.getText();
+        });
+        JTextField OperationalHoursTextField = new JTextField(20);
+        OperationalHoursTextField.addActionListener(actionEvent -> {
+            String OperationalHoursInput = OperationalHoursTextField.getText();
+        });
+
+        TypeOfAppliancePanel.add(new Label("Type of Appliance"));
+        PowerRatingPanel.add(new Label("Power Rating"));
+        NumberOfAppliancesPanel.add(new Label("Number of Appliance"));
+        OperationalHoursPanel.add(new Label("Operational Hours/day"));
+        TypeOfCurrentPanel.add(new Label("Current Type"));
+
+        TypeOfAppliancePanel.add(TypeOfApplianceComboBox); //check
+        TypeOfCurrentPanel.add(CurrentTypeComboBox); //check
+
+        PowerRatingPanel.add(PowerRatingTextField);
+        NumberOfAppliancesPanel.add(NumberOfAppliancesTextField);
+        OperationalHoursPanel.add(OperationalHoursTextField);
+
+        appliancesPanel.add(TypeOfAppliancePanel);
+        appliancesPanel.add(PowerRatingPanel);
+        appliancesPanel.add(NumberOfAppliancesPanel);
+        appliancesPanel.add(OperationalHoursPanel);
+        appliancesPanel.add(TypeOfCurrentPanel);
 
         //----------------- Water & Sanitation -----//
-        JPanel waterAndSanitationPanel = new JPanel();
+        JPanel WaterAndSanitationPanel = new JPanel();
 
         //----------------- Agriculture ------------//
-        JPanel agriculturePanel = new JPanel();
+        JPanel AgriculturePanel = new JPanel();
 
         //----------------- Other Uses -------------//
-        JPanel otherUsesPanel = new JPanel();
+        JPanel OtherUsesPanel = new JPanel();
 
         //----------------- Tabs -------------------//
         JTabbedPane tabbedPane = new JTabbedPane();
