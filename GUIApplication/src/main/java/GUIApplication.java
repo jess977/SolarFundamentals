@@ -13,7 +13,49 @@ import java.awt.event.KeyEvent;
        - Add grid layout rows and columns in Appliances
  */
 
+class EnergifyScrollTablePanel extends JPanel {
+    private JTable table;
+
+    public EnergifyScrollTablePanel(Object[][] rowData, Object[] rowHeader) {
+        DefaultTableModel model = new DefaultTableModel(rowData, rowHeader);
+        table = new JTable();
+        table.setModel(model);//table.setFillsViewportHeight(true);
+
+        JButton addButton = new JButton("Add");
+        JButton removeButton = new JButton("Remove");
+        addButton.addActionListener(actionEvent -> model.addRow(rowData[0]));
+        removeButton.addActionListener(actionEvent -> {
+            int idx = table.getSelectedRow();
+            while (idx >= 0) {
+                model.removeRow(idx);
+                idx = table.getSelectedRow();
+            }
+        });
+
+        JPanel buttonsPanel = new JPanel();
+        buttonsPanel.setLayout(new BoxLayout(buttonsPanel, BoxLayout.LINE_AXIS));
+        buttonsPanel.add(addButton);
+        buttonsPanel.add(Box.createRigidArea(new Dimension(5,0)));
+        buttonsPanel.add(removeButton);
+
+        JPanel tablePanel = new JPanel();
+        tablePanel.setLayout(new BorderLayout());
+        tablePanel.add(table.getTableHeader(), BorderLayout.PAGE_START);
+        tablePanel.add(table, BorderLayout.CENTER);
+
+        ScrollPane scrollPane = new ScrollPane();
+        scrollPane.add(tablePanel);
+
+        setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
+        add(scrollPane);
+        add(Box.createRigidArea(new Dimension(0,5)));
+        add(buttonsPanel);
+    }
+    public JTable getTable() {return table;}
+}
+
 public class GUIApplication {
+
     public static void main(String[] args) {
         //----------------- Intro ------------------//
         JPanel introPanel = new JPanel();
@@ -56,7 +98,7 @@ public class GUIApplication {
         introPanel.add(isTheUserCurrentlyLocatedInThePanel);
 
         //----------------- Appliances -------------//
-        Object[][] appliancesRowData = {{"Edit", "Edit", "Edit", "Edit", "Edit"}};
+        /*Object[][] appliancesRowData = {{"Edit", "Edit", "Edit", "Edit", "Edit"}};
         DefaultTableModel appliancesModel = new DefaultTableModel(appliancesRowData, new String[] {"Type of Appliance", "Power Rating", "Number of Appliance", "Operational Hours/day", "ADD/RM"});
         JTable appliancesTable = new JTable();
         appliancesTable.setModel(appliancesModel);
@@ -92,15 +134,27 @@ public class GUIApplication {
         appliancesTablePanel.add(appliancesTable.getTableHeader(), BorderLayout.PAGE_START);
         appliancesTablePanel.add(appliancesTable, BorderLayout.CENTER);
 
-        ScrollPane appliancesPane = new ScrollPane();
-        appliancesPane.add(appliancesTablePanel);
+        ScrollPane appliancesScrollPane = new ScrollPane();
+        appliancesScrollPane.add(appliancesTablePanel);
 
         JPanel appliancesPanel = new JPanel();
         appliancesPanel.setLayout(new BoxLayout(appliancesPanel, BoxLayout.PAGE_AXIS));
 
-        appliancesPanel.add(appliancesPane);
+        appliancesPanel.add(appliancesScrollPane);
         appliancesPanel.add(Box.createRigidArea(new Dimension(0,5)));
-        appliancesPanel.add(appliancesButtonsPanel);
+        appliancesPanel.add(appliancesButtonsPanel);*/
+
+        EnergifyScrollTablePanel appliancesPanel = new EnergifyScrollTablePanel(
+                new Object[][] {{"Edit", "Edit", "Edit", "Edit", "Edit"}},
+                new String[] {"Type of Appliance", "Power Rating", "Number of Appliance", "Operational Hours/day", "ADD/RM"});
+
+        appliancesPanel.getTable().getColumnModel().getColumn(0) //Type Of Appliances
+                .setCellEditor(new DefaultCellEditor(
+                        new JComboBox<>(new String[] {"Lightbulb", "Radio", "TV", "Refrigerator", "Fan", "Mobile", "Electric Stove", "Other"})));
+
+        appliancesPanel.getTable().getColumnModel().getColumn(4) //Current Type
+                .setCellEditor(new DefaultCellEditor(
+                        new JComboBox<>(new String[] {"DC", "AC"})));
 
         //----------------- Water & Sanitation -----//
         JPanel waterAndSanitationPanel = new JPanel();
@@ -109,7 +163,39 @@ public class GUIApplication {
         JPanel agriculturePanel = new JPanel();
 
         //----------------- Other Uses -------------//
+        final String OTHER_USES_EMPTY_PANEL = "No";
+        final String OTHER_USES_TABLE_PANEL = "Yes";
+
+        EnergifyScrollTablePanel otherUsesFirstTablePanel = new EnergifyScrollTablePanel(
+                new Object[][] {{"Edit", "Edit", "Edit"}},
+                new String[] {"Activities requiring electricity", "Electricity consumed", "Operational Hours/day"});
+
+        EnergifyScrollTablePanel otherUsesSecondTablePanel = new EnergifyScrollTablePanel(
+                new Object[][] {{"Edit", "Edit", "Edit"}},
+                new String[] {"Activities requiring heat", "Heat consumed", "Operational Hours/day"});
+
+        JPanel otherUsesTablesPanel = new JPanel();
+        otherUsesTablesPanel.setLayout(new BoxLayout(otherUsesTablesPanel, BoxLayout.PAGE_AXIS));
+        otherUsesTablesPanel.add(otherUsesFirstTablePanel);
+        otherUsesTablesPanel.add(otherUsesSecondTablePanel);
+
+        JPanel otherUsesCardPanel = new JPanel(new CardLayout());
+        otherUsesCardPanel.add(new JPanel(), OTHER_USES_EMPTY_PANEL);
+        otherUsesCardPanel.add(otherUsesTablesPanel, OTHER_USES_TABLE_PANEL);
+
+        JComboBox<String> otherUsesComboBox = new JComboBox<>(new String[] {OTHER_USES_EMPTY_PANEL, OTHER_USES_TABLE_PANEL});
+        otherUsesComboBox.addItemListener(evt -> {
+            CardLayout cl = (CardLayout)(otherUsesCardPanel.getLayout());
+            cl.show(otherUsesCardPanel, (String)evt.getItem());
+        });
+
+        JPanel otherUsesComboBoxPanel = new JPanel();
+        otherUsesComboBoxPanel.add(otherUsesComboBox);
+
         JPanel otherUsesPanel = new JPanel();
+        otherUsesPanel.setLayout(new BoxLayout(otherUsesPanel, BoxLayout.PAGE_AXIS));
+        otherUsesPanel.add(otherUsesComboBoxPanel);
+        otherUsesPanel.add(otherUsesCardPanel);
 
         //----------------- Tabs -------------------//
         JTabbedPane tabbedPane = new JTabbedPane();
