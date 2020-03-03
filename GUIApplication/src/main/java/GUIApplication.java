@@ -11,6 +11,7 @@ import java.awt.event.KeyEvent;
 
 /* TO DO:
        - Add grid layout rows and columns in Appliances
+       - Agriculture not finished
  */
 
 class EnergifyScrollTablePanel extends JPanel {
@@ -99,6 +100,7 @@ public class GUIApplication {
 
         //----------------- Appliances -------------//
         /*Object[][] appliancesRowData = {{"Edit", "Edit", "Edit", "Edit", "Edit"}};
+
         DefaultTableModel appliancesModel = new DefaultTableModel(appliancesRowData, new String[] {"Type of Appliance", "Power Rating", "Number of Appliance", "Operational Hours/day", "ADD/RM"});
         JTable appliancesTable = new JTable();
         appliancesTable.setModel(appliancesModel);
